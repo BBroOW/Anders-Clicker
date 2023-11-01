@@ -9,49 +9,78 @@ import OnAndON from "./assets/music/onandon.mp3";
 import WhyWeLose from "./assets/music/whywelose.mp3";
 
 let image = anders1;
-const song1 = new Audio(Letsgo);
-const song2 = new Audio(Nekozilla);
-const song3 = new Audio(OnAndON);
-const song4 = new Audio(WhyWeLose);
+let randomSong;
+let song;
+let isSongPlaying = false;
+let audioVolume = 0.2;
 
-function randomSong() {
+function randomNumberMusic() {
   const randomNumberSong = Math.floor(Math.random() * 4);
-  console.log("random song", randomNumberSong);
+  console.log(randomNumberSong);
 
-  switch (randomNumberSong) {
-    case 0:
-      song1.play();
-      break;
-    case 1:
-      song2.play();
-      break;
-    case 2:
-      song3.play();
-      break;
-    case 3:
-      song4.play();
-      break;
-    default:
-      console.log("Error");
+  if (randomNumberSong === 0) {
+    randomSong = Letsgo;
+  } else if (randomNumberSong === 1) {
+    randomSong = Nekozilla;
+  } else if (randomNumberSong === 2) {
+    randomSong = OnAndON;
+  } else if (randomNumberSong === 3) {
+    randomSong = WhyWeLose;
   }
 }
 
-//function that random play song and swaps song after the song is done
-song1.addEventListener("ended", randomSong);
-song2.addEventListener("ended", randomSong);
-song3.addEventListener("ended", randomSong);
-song4.addEventListener("ended", randomSong);
+function playMusic() {
+  // Check if a song is currently playing
+  if (isSongPlaying) {
+    return;
+  }
+
+  randomNumberMusic(); // Select a new random song
+  song = new Audio(randomSong);
+
+  // Set isSongPlaying to true to indicate that a song is playing
+  isSongPlaying = true;
+
+  // Add an event listener for the "ended" event
+  song.addEventListener("ended", function () {
+    // Reset isSongPlaying to false when the song ends
+    isSongPlaying = false;
+
+    // Call randomNumberMusic again and play the new song
+    playMusic();
+  });
+
+  // Play the song
+  song.play();
+}
+
+function handleVolumeChange(event) {
+  const newVolume = event.target.value / 100;
+  audioVolume = newVolume;
+
+  if (isSongPlaying && song) {
+    song.volume = newVolume;
+  }
+
+  // Update the displayed volume level
+  document.getElementById("demo").innerHTML = Math.round(newVolume * 100);
+}
+
+
+
 
 function App() {
-  randomSong();
   // State to keep track of trash count
   const [trashCount, setTrashCount] = useState(() => {
     // Initialize with the value from local storage or default to 0
     return parseInt(localStorage.getItem("trashCount")) || 0;
+    volumeSlider() 
+    
   });
 
   // Function to handle button click
   function onClick() {
+    playMusic();
     const randomNumber = Math.floor(Math.random() * 1000);
     console.log(randomNumber);
 
@@ -111,7 +140,21 @@ function App() {
       <div id="video">
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
-
+      {/* Volume slider */}
+      <div id="volume">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          defaultValue={audioVolume * 100}
+          className="slider"
+          id="myRange"
+          onChange={handleVolumeChange}
+        />
+        <p>
+          Volume: <span id="demo">{Math.round(audioVolume * 100)}</span>
+        </p>
+      </div>
       <h1>Click Anders</h1>
       <button type="button" id="søppelenhet" onClick={onClick}>
         <img src={image} alt="" />
