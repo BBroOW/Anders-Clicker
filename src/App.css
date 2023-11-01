@@ -6,6 +6,35 @@
 }
 
 /* video id cover screen */
+#page {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#main-button{
+  order: 0;
+}
+
+#volume {
+  /* Add any necessary styling for the volume slider */
+}
+
+
+
+#coins {
+  order: 1; /* Move the coins div to the left of the button */
+  margin-right: 20px; /* Adjust margin as needed */
+}
+
+#displayClick {
+  order: 0; 
+}
+
+#søppelenhet {
+  /* Add any necessary styling for the button */
+}
+
 
 #fnaf {
   top: 0;
@@ -15,6 +44,10 @@
   height: 100%;
   object-fit: cover;
 }
+
+
+
+
 
 video::-webkit-media-controls {
   display: none;

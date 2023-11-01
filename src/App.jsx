@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import anders1 from "./assets/images/anders1.png";
 import anders2 from "./assets/images/anders2.png";
+import anders3 from "./assets/images/anders3.png";
+import anders4 from "./assets/images/anders4.png";
+import anders5 from "./assets/images/anders5.png";
+import anders6 from "./assets/images/anders6.png";
+import anders7 from "./assets/images/anders7.png";
+import anders8 from "./assets/images/anders8.png";
+import anders9 from "./assets/images/anders9.png";
+import anders10 from "./assets/images/anders10.png";
 import video from "./assets/video/fnaf.mp4";
 import Letsgo from "./assets/music/letsgo.mp3";
 import Nekozilla from "./assets/music/nekozilla.mp3";
@@ -71,15 +79,23 @@ function handleVolumeChange(event) {
 
 function App() {
   // State to keep track of trash count
-  const [trashCount, setTrashCount] = useState(() => {
+  const [clicks, setClicks] = useState(() => {
     // Initialize with the value from local storage or default to 0
-    return parseInt(localStorage.getItem("trashCount")) || 0;
+    return parseInt(localStorage.getItem("clicks")) || 0;
     volumeSlider() 
     
   });
 
   // Function to handle button click
   function onClick() {
+
+    //scale only the img every time you click and after you click it goes back to normal
+    document.getElementById("img").style.transform = "scale(1.1)";
+    setTimeout(() => {
+      document.getElementById("img").style.transform = "scale(1)";
+    }, 100);
+
+
     playMusic();
     const randomNumber = Math.floor(Math.random() * 1000);
     console.log(randomNumber);
@@ -119,22 +135,75 @@ function App() {
       document.getElementById("fnaf").style.display = "none";
     }
 
-    const newTrashCount = trashCount + 1;
-    setTrashCount(newTrashCount);
+    const newClicks = clicks + 1;
+    setClicks(newClicks);
 
     // Store the updated count in local storage
-    localStorage.setItem("trashCount", newTrashCount.toString());
+    localStorage.setItem("clicks", newClicks.toString());
   }
 
   // Use useEffect to update the DOM when the component mounts
   useEffect(() => {
-    document.getElementById("displayClick").innerHTML = trashCount;
-  }, [trashCount]);
+    document.getElementById("displayClick").innerHTML = clicks;
+  }, [clicks]);
 
-  if (trashCount >= 10) {
+  if (clicks >= 1000) {
     image = anders2;
   }
+  if (clicks >= 10000) {
+    image = anders3;
+  }
+  if (clicks >= 100000) {
+    image = anders4;
+  }
+  if (clicks >= 1000000) {
+    image = anders5;
+  }
+  if (clicks >= 10000000) {
+    image = anders6;
+  }
+  if (clicks >= 100000000) {
+    image = anders7;
+  }
+  if (clicks >= 1000000000) {
+    image = anders8;
+  }
+  if (clicks >= 10000000000) {
+    image = anders9;
+  }
+  if (clicks >= 100000000000) {
+    image = anders10;
+  }
 
+/* test images
+  if (clicks >= 10) {
+    image = anders2;
+  }
+  if (clicks >= 20) {
+    image = anders3;
+  }
+  if (clicks >= 30) {
+    image = anders4;
+  }
+  if (clicks >= 40) {
+    image = anders5;
+  }
+  if (clicks >= 50) {
+    image = anders6;
+  }
+  if (clicks >= 60) {
+    image = anders7;
+  }
+  if (clicks >= 70) {
+    image = anders8;
+  }
+  if (clicks >= 80) {
+    image = anders9;
+  }
+  if (clicks >= 90) {
+    image = anders10;
+  }
+*/
   return (
     <div id="page">
       <div id="video">
@@ -155,10 +224,17 @@ function App() {
           Volume: <span id="demo">{Math.round(audioVolume * 100)}</span>
         </p>
       </div>
-      <h1>Click Anders</h1>
+      <div id="main-button">
+        <h1>Click Anders</h1>
       <button type="button" id="søppelenhet" onClick={onClick}>
-        <img src={image} alt="" />
+        <img src={image} id="img" alt="Anders" />
       </button>
+      </div>
+      
+      <div id="coins">
+        <h1>MR Andersen Coins</h1>
+        <p></p>
+      </div>
       <div id="displayClick">
         <p></p>
       </div>
