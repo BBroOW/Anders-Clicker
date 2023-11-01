@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import "./index.css";
 import anders1 from "./assets/images/anders1.png";
 import anders2 from "./assets/images/anders2.png";
 import anders3 from "./assets/images/anders3.png";
@@ -46,6 +47,8 @@ function playMusic() {
   randomNumberMusic(); // Select a new random song
   song = new Audio(randomSong);
 
+  // set default volume
+  song.volume = audioVolume;
   // Set isSongPlaying to true to indicate that a song is playing
   isSongPlaying = true;
 
@@ -88,7 +91,7 @@ function App() {
 
   // Function to handle button click
   function onClick() {
-
+    playMusic();
     //scale only the img every time you click and after you click it goes back to normal
     document.getElementById("img").style.transform = "scale(1.1)";
     setTimeout(() => {
@@ -96,7 +99,7 @@ function App() {
     }, 100);
 
 
-    playMusic();
+    
     const randomNumber = Math.floor(Math.random() * 1000);
     console.log(randomNumber);
 
@@ -206,11 +209,13 @@ function App() {
 */
   return (
     <div id="page">
+      
       <div id="video">
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       {/* Volume slider */}
       <div id="volume">
+        <p>Volume: <span id="demo"></span></p>
         <input
           type="range"
           min="0"
@@ -220,24 +225,18 @@ function App() {
           id="myRange"
           onChange={handleVolumeChange}
         />
-        <p>
-          Volume: <span id="demo">{Math.round(audioVolume * 100)}</span>
-        </p>
+
       </div>
       <div id="main-button">
-        <h1>Click Anders</h1>
+      <p id="displayClick"></p>
       <button type="button" id="søppelenhet" onClick={onClick}>
         <img src={image} id="img" alt="Anders" />
       </button>
       </div>
+      <div id="title"> 
+        <h1>Click Anders</h1>
+      </div>
       
-      <div id="coins">
-        <h1>MR Andersen Coins</h1>
-        <p></p>
-      </div>
-      <div id="displayClick">
-        <p></p>
-      </div>
     </div>
   );
 }
