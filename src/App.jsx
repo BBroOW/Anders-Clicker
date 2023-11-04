@@ -24,18 +24,28 @@ let isSongPlaying = false;
 let audioVolume = 0.2;
 
 function randomNumberMusic() {
+
   const randomNumberSong = Math.floor(Math.random() * 4);
   console.log(randomNumberSong);
 
-  if (randomNumberSong === 0) {
+  //make it so if the song has been played it can not be played twice in a row
+
+  if (randomNumberSong === 0 && randomSong !== Letsgo) {
     randomSong = Letsgo;
-  } else if (randomNumberSong === 1) {
+  } else if (randomNumberSong === 1 && randomSong !== Nekozilla) {
     randomSong = Nekozilla;
-  } else if (randomNumberSong === 2) {
+  } else if (randomNumberSong === 2 && randomSong !== OnAndON) {
     randomSong = OnAndON;
-  } else if (randomNumberSong === 3) {
+  } else if (randomNumberSong === 3 && randomSong !== WhyWeLose) {
     randomSong = WhyWeLose;
   }
+}
+
+function volumeSlider() {
+  // Update the current slider value (each time you drag the slider handle)
+  var slider = document.getElementById("myRange");
+  var output = document.getElementById("demo");
+  output.innerHTML = slider.value; // Display the default slider value
 }
 
 function playMusic() {
@@ -58,12 +68,17 @@ function playMusic() {
     isSongPlaying = false;
 
     // Call randomNumberMusic again and play the new song
+    volumeSlider();
     playMusic();
   });
+
+
 
   // Play the song
   song.play();
 }
+
+
 
 function handleVolumeChange(event) {
   const newVolume = event.target.value / 100;
@@ -147,8 +162,9 @@ function App() {
 
   // Use useEffect to update the DOM when the component mounts
   useEffect(() => {
-    document.getElementById("displayClick").innerHTML = clicks;
+    document.getElementById("displayClick").innerHTML = `${clicks} clicks`;
   }, [clicks]);
+  
 
   if (clicks >= 1000) {
     image = anders2;
@@ -214,27 +230,30 @@ function App() {
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       {/* Volume slider */}
-      <div id="volume">
-        <p>Volume: <span id="demo"></span></p>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          defaultValue={audioVolume * 100}
-          className="slider"
-          id="myRange"
-          onChange={handleVolumeChange}
-        />
-
+      <div id="navbar">
+        <div id="volume">
+          <p>Volume: <span id="demo"></span></p>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            defaultValue={audioVolume * 100}
+            className="slider"
+            id="myRange"
+            onChange={handleVolumeChange}
+          />
+        </div>
+        < h1 id="title">CLICK ANDERS</h1>
+        <div id="login">
+          <p>login</p>
+        </div>
       </div>
+      {/* Main button */}
       <div id="main-button">
       <p id="displayClick"></p>
-      <button type="button" id="søppelenhet" onClick={onClick}>
+      <button type="button" onClick={onClick}>
         <img src={image} id="img" alt="Anders" />
       </button>
-      </div>
-      <div id="title"> 
-        <h1>Click Anders</h1>
       </div>
       
     </div>
