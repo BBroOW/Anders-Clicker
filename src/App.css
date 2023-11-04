@@ -22,10 +22,12 @@ body{
 }
 
 #volume{
+  width: 10rem;
   margin-left: 3rem;
 }
 
 #login{
+  width: 10rem;
   margin-right: 3rem;
 }
 
@@ -54,4 +56,28 @@ body{
   margin: 0 auto;
   width: 40vw;
   height: 75vh ;
+}
+
+#displayClick{
+  margin: 0 auto;
+  width: 40vw;
+  height: 2rem;
+  margin-top: 1rem;
+}
+
+
+
+
+#coins {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 10rem;
+  height: 5rem;
+}
+
+#coins img{
+  width: 5rem;
+  height: 5rem;
 }
