@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "./index.css";
-import anders1 from "./assets/images/anders1.png";
-import anders2 from "./assets/images/anders2.png";
-import anders3 from "./assets/images/anders3.png";
-import anders4 from "./assets/images/anders4.png";
-import anders5 from "./assets/images/anders5.png";
-import anders6 from "./assets/images/anders6.png";
-import anders7 from "./assets/images/anders7.png";
-import anders8 from "./assets/images/anders8.png";
-import anders9 from "./assets/images/anders9.png";
-import anders10 from "./assets/images/anders10.png";
 import andersonCoin from "./assets/images/anderson-coin.png";
 import clickImg from "./assets/images/click.png";
 import video from "./assets/video/fnaf.mp4";
@@ -32,6 +22,16 @@ import Shine from "./assets/music/Shine.mp3";
 import ShootingStars from "./assets/music/ShootinStars.mp3";
 import TropicLove from "./assets/music/TropicLove.mp3";
 import Symbolism from "./assets/music/Symbolism.mp3";
+import anders1 from "./assets/images/anders1.png";
+import anders2 from "./assets/images/anders2.png";
+import anders3 from "./assets/images/anders3.png";
+import anders4 from "./assets/images/anders4.png";
+import anders5 from "./assets/images/anders5.png";
+import anders6 from "./assets/images/anders6.png";
+import anders7 from "./assets/images/anders7.png";
+import anders8 from "./assets/images/anders8.png";
+import anders9 from "./assets/images/anders9.png";
+import anders10 from "./assets/images/anders10.png";
 
 const AndersonCoin = andersonCoin;
 
@@ -143,26 +143,29 @@ function App() {
 
   useEffect(() => {
     document.getElementById("displayClick").innerHTML = `${clicks} clicks`;
+    localStorage.setItem("clicks", clicks);
   }, [clicks, andersonCoinNumber]);
 
   useEffect(() => {
     if (clicks >= 10 && clicks % 10 === 0) {
       setAndersonCoinNumber(andersonCoinNumber + 1);
+      localStorage.setItem("coins", andersonCoinNumber);
     }
   }, [clicks]);
 
+  useEffect(() => {
+    localStorage.setItem("upgradeCost", upgradeCost);
+  }, [upgradeCost]);
+
   function UpgradeClick() {
-    // Check if there are enough coins to purchase the upgrade
     if (andersonCoinNumber >= upgradeCost) {
-      // Deduct the cost from the coins
       const newAndersonCoinNumber = andersonCoinNumber - upgradeCost;
       setAndersonCoinNumber(newAndersonCoinNumber);
 
       setClickMultiplier(clickMultiplier + 1);
       setUpgradeCost(upgradeCost * 2);
 
-      // Save the upgraded values to localStorage
-      localStorage.setItem("coins", newAndersonCoinNumber.toString());
+      localStorage.setItem("coins", newAndersonCoinNumber);
       console.log("Upgrade purchased!", newAndersonCoinNumber);
     }
   }
@@ -175,79 +178,32 @@ function App() {
       document.getElementById("image").style.transform = "scale(1)";
     }, 100);
 
-    const randomNumber = Math.floor(Math.random() * 2);
+    const randomNumber = Math.floor(Math.random() * 500);
 
     if (randomNumber === 1) {
       let videoFnaf = document.getElementById("fnaf");
       videoFnaf.style.display = "block";
 
-      if (videoFnaf.requestFullscreen) {
-        videoFnaf.requestFullscreen();
-      } else if (videoFnaf.mozRequestFullScreen) {
-        videoFnaf.mozRequestFullScreen();
-      } else if (videoFnaf.webkitRequestFullscreen) {
-        videoFnaf.webkitRequestFullscreen();
-      } else if (videoFnaf.msRequestFullscreen) {
-        videoFnaf.msRequestFullscreen();
-      }
-
       videoFnaf.play();
 
-      setTimeout(() => {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
+      // Make the video cover the entire screen
+      videoFnaf.style.width = "100%";
+      videoFnaf.style.height = "100%";
+      videoFnaf.style.position = "absolute";
+      videoFnaf.style.zIndex = "999";
 
+      setTimeout(() => {
         videoFnaf.style.display = "none";
       }, 2500);
     } else {
       document.getElementById("fnaf").style.display = "none";
     }
 
-    if (randomNumber === 1) {
-      let fnafBlock = document.getElementById("block");
-      fnafBlock.style.display = "block";
-
-      if (fnafBlock.requestFullscreen) {
-        fnafBlock.requestFullscreen();
-      } else if (fnafBlock.mozRequestFullScreen) {
-        fnafBlock.mozRequestFullScreen();
-      } else if (fnafBlock.webkitRequestFullscreen) {
-        fnafBlock.webkitRequestFullscreen();
-      } else if (fnafBlock.msRequestFullscreen) {
-        fnafBlock.msRequestFullscreen();
-      }
-
-      setTimeout(() => {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-
-        fnafBlock.style.display = "none";
-      }, 2500);
-    } else {
-      document.getElementById("block").style.display = "none";
-    }
-
     const newClicks = clicks + 1;
     setClicks(newClicks + clickMultiplier);
 
-    AndersonCoinNumberChecker(newClicks, setAndersonCoinNumber);
-
-    localStorage.setItem("coins", andersonCoinNumber.toString());
-    localStorage.setItem("clicks", newClicks.toString());
+    localStorage.setItem("coins", andersonCoinNumber);
+    localStorage.setItem("clicks", newClicks);
   }
 
   if (clicks >= 1000) {
@@ -281,7 +237,6 @@ function App() {
   return (
     <div id="page">
       <div id="video">
-        <img src={anders1} id="block" style={{ display: "none" }} />
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       <div id="navbar">

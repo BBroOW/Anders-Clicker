@@ -59,6 +59,8 @@ body {
 #main-button img {
   width: 50vw;
   height: 75vh;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 #main-button button {
@@ -133,3 +135,5 @@ body {
   width: 20vw;
   height: 5rem;
 }
+
+
