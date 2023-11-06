@@ -12,11 +12,26 @@ import anders8 from "./assets/images/anders8.png";
 import anders9 from "./assets/images/anders9.png";
 import anders10 from "./assets/images/anders10.png";
 import andersonCoin from "./assets/images/anderson-coin.png";
+import clickImg from "./assets/images/click.png";
 import video from "./assets/video/fnaf.mp4";
 import Letsgo from "./assets/music/letsgo.mp3";
 import Nekozilla from "./assets/music/nekozilla.mp3";
 import OnAndON from "./assets/music/onandon.mp3";
 import WhyWeLose from "./assets/music/whywelose.mp3";
+import Arrow from "./assets/music/Arrow.mp3";
+import Blank from "./assets/music/Blank.mp3";
+import Cetus from "./assets/music/Cetus.mp3";
+import Circles from "./assets/music/Circles.mp3";
+import DifferentHeaven from "./assets/music/DifferentHeaven.mp3";
+import ElectroLights from "./assets/music/ElectroLight.mp3";
+import FallOfLight from "./assets/music/FallOfLight.mp3";
+import Hellcat from "./assets/music/Hellcat.mp3";
+import Invincible from "./assets/music/Invincible.mp3";
+import Panda from "./assets/music/Panda.mp3";
+import Shine from "./assets/music/Shine.mp3";
+import ShootingStars from "./assets/music/ShootinStars.mp3";
+import TropicLove from "./assets/music/TropicLove.mp3";
+import Symbolism from "./assets/music/Symbolism.mp3";
 
 const AndersonCoin = andersonCoin;
 
@@ -27,7 +42,7 @@ let isSongPlaying = false;
 let audioVolume = 0.2;
 
 function randomNumberMusic() {
-  const randomNumberSong = Math.floor(Math.random() * 4);
+  const randomNumberSong = Math.floor(Math.random() * 17);
   console.log(randomNumberSong);
 
   if (randomNumberSong === 0 && randomSong !== Letsgo) {
@@ -38,6 +53,34 @@ function randomNumberMusic() {
     randomSong = OnAndON;
   } else if (randomNumberSong === 3 && randomSong !== WhyWeLose) {
     randomSong = WhyWeLose;
+  } else if (randomNumberSong === 4 && randomSong !== Arrow) {
+    randomSong = Arrow;
+  } else if (randomNumberSong === 5 && randomSong !== Blank) {
+    randomSong = Blank;
+  } else if (randomNumberSong === 6 && randomSong !== Cetus) {
+    randomSong = Cetus;
+  } else if (randomNumberSong === 7 && randomSong !== Circles) {
+    randomSong = Circles;
+  } else if (randomNumberSong === 8 && randomSong !== DifferentHeaven) {
+    randomSong = DifferentHeaven;
+  } else if (randomNumberSong === 9 && randomSong !== ElectroLights) {
+    randomSong = ElectroLights;
+  } else if (randomNumberSong === 10 && randomSong !== FallOfLight) {
+    randomSong = FallOfLight;
+  } else if (randomNumberSong === 11 && randomSong !== Hellcat) {
+    randomSong = Hellcat;
+  } else if (randomNumberSong === 12 && randomSong !== Invincible) {
+    randomSong = Invincible;
+  } else if (randomNumberSong === 13 && randomSong !== Panda) {
+    randomSong = Panda;
+  } else if (randomNumberSong === 14 && randomSong !== Shine) {
+    randomSong = Shine;
+  } else if (randomNumberSong === 15 && randomSong !== ShootingStars) {
+    randomSong = ShootingStars;
+  } else if (randomNumberSong === 16 && randomSong !== TropicLove) {
+    randomSong = TropicLove;
+  } else if (randomNumberSong === 17 && randomSong !== Symbolism) {
+    randomSong = Symbolism;
   }
 }
 
@@ -78,16 +121,20 @@ function handleVolumeChange(event) {
   document.getElementById("demo").innerHTML = Math.round(newVolume * 100);
 }
 
-function AndersonCoinNumberChecker(clicks, setAndersonCoinNumber) {
-  if (clicks >= 10 && clicks % 10 === 0) {
-    const newAndersonCoinNumber = clicks / 10;
-    setAndersonCoinNumber(newAndersonCoinNumber);
-  }
-}
+const initialUpgradeCost = 10; // Initial cost of the upgrade
+let upgradeCost = initialUpgradeCost; // Variable to track the current upgrade cost
 
 function App() {
   const [clicks, setClicks] = useState(() => {
     return parseInt(localStorage.getItem("clicks")) || 0;
+  });
+
+  const [clickMultiplier, setClickMultiplier] = useState(() => {
+    return parseInt(localStorage.getItem("clickMultiplier")) || 0;
+  });
+
+  const [upgradeCost, setUpgradeCost] = useState(() => {
+    return parseInt(localStorage.getItem("upgradeCost")) || initialUpgradeCost;
   });
 
   const [andersonCoinNumber, setAndersonCoinNumber] = useState(() => {
@@ -96,20 +143,41 @@ function App() {
 
   useEffect(() => {
     document.getElementById("displayClick").innerHTML = `${clicks} clicks`;
-    AndersonCoinNumberChecker(clicks, setAndersonCoinNumber);
   }, [clicks, andersonCoinNumber]);
+
+  useEffect(() => {
+    if (clicks >= 10 && clicks % 10 === 0) {
+      setAndersonCoinNumber(andersonCoinNumber + 1);
+    }
+  }, [clicks]);
+
+  function UpgradeClick() {
+    // Check if there are enough coins to purchase the upgrade
+    if (andersonCoinNumber >= upgradeCost) {
+      // Deduct the cost from the coins
+      const newAndersonCoinNumber = andersonCoinNumber - upgradeCost;
+      setAndersonCoinNumber(newAndersonCoinNumber);
+
+      setClickMultiplier(clickMultiplier + 1);
+      setUpgradeCost(upgradeCost * 2);
+
+      // Save the upgraded values to localStorage
+      localStorage.setItem("coins", newAndersonCoinNumber.toString());
+      console.log("Upgrade purchased!", newAndersonCoinNumber);
+    }
+  }
 
   function onClick() {
     playMusic();
 
-    document.getElementById("img").style.transform = "scale(1.1)";
+    document.getElementById("image").style.transform = "scale(1.1)";
     setTimeout(() => {
-      document.getElementById("img").style.transform = "scale(1)";
+      document.getElementById("image").style.transform = "scale(1)";
     }, 100);
 
-    const randomNumber = Math.floor(Math.random() * 1000);
+    const randomNumber = Math.floor(Math.random() * 2);
 
-    if (randomNumber === 56) {
+    if (randomNumber === 1) {
       let videoFnaf = document.getElementById("fnaf");
       videoFnaf.style.display = "block";
 
@@ -142,8 +210,39 @@ function App() {
       document.getElementById("fnaf").style.display = "none";
     }
 
+    if (randomNumber === 1) {
+      let fnafBlock = document.getElementById("block");
+      fnafBlock.style.display = "block";
+
+      if (fnafBlock.requestFullscreen) {
+        fnafBlock.requestFullscreen();
+      } else if (fnafBlock.mozRequestFullScreen) {
+        fnafBlock.mozRequestFullScreen();
+      } else if (fnafBlock.webkitRequestFullscreen) {
+        fnafBlock.webkitRequestFullscreen();
+      } else if (fnafBlock.msRequestFullscreen) {
+        fnafBlock.msRequestFullscreen();
+      }
+
+      setTimeout(() => {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+
+        fnafBlock.style.display = "none";
+      }, 2500);
+    } else {
+      document.getElementById("block").style.display = "none";
+    }
+
     const newClicks = clicks + 1;
-    setClicks(newClicks);
+    setClicks(newClicks + clickMultiplier);
 
     AndersonCoinNumberChecker(newClicks, setAndersonCoinNumber);
 
@@ -151,9 +250,38 @@ function App() {
     localStorage.setItem("clicks", newClicks.toString());
   }
 
+  if (clicks >= 1000) {
+    image = anders2;
+  }
+  if (clicks >= 20000) {
+    image = anders3;
+  }
+  if (clicks >= 300000) {
+    image = anders4;
+  }
+  if (clicks >= 4000000) {
+    image = anders5;
+  }
+  if (clicks >= 50000000) {
+    image = anders6;
+  }
+  if (clicks >= 600000000) {
+    image = anders7;
+  }
+  if (clicks >= 7000000000) {
+    image = anders8;
+  }
+  if (clicks >= 80000000000) {
+    image = anders9;
+  }
+  if (clicks >= 900000000000) {
+    image = anders10;
+  }
+
   return (
     <div id="page">
       <div id="video">
+        <img src={anders1} id="block" style={{ display: "none" }} />
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       <div id="navbar">
@@ -176,17 +304,33 @@ function App() {
           <p>login</p>
         </div>
       </div>
-      <div id="main-page">
-        <div id="coins">
-          <img src={AndersonCoin} alt="coins" />
-          <p id="displayCoin">{andersonCoinNumber}</p>
+      <div id="coins">
+        <img src={AndersonCoin} alt="coins" />
+        <p id="displayCoin">{andersonCoinNumber}</p>
+      </div>
+
+      <div id="upgrade-container">
+        <p>Upgrade's</p>
+        <div id="upgrades">
+          <div id="upgrade-click">
+            <button
+              type="button"
+              id="upgrade-click-button"
+              onClick={UpgradeClick}
+            >
+              <img id="click-img" src={clickImg} />
+              <p id="upgrade-click-price"></p>
+            </button>
+          </div>
         </div>
-        <div id="main-button">
-          <p id="displayClick"></p>
-          <button type="button" onClick={onClick}>
-            <img src={image} id="img" alt="Anders" />
-          </button>
-        </div>
+      </div>
+      {/*<div id="leaderboard">leaderboard coming soon</div>*/}
+
+      <div id="main-button">
+        <p id="displayClick"></p>
+        <button type="button" onClick={onClick}>
+          <img src={image} id="image" alt="Anders" />
+        </button>
       </div>
     </div>
   );
