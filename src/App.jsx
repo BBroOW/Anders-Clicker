@@ -130,7 +130,7 @@ function App() {
   });
 
   const [clickMultiplier, setClickMultiplier] = useState(() => {
-    return parseInt(localStorage.getItem("clickMultiplier")) || 0;
+    return parseInt(localStorage.getItem("clickMultiplier") || 1);
   });
 
   const [upgradeCost, setUpgradeCost] = useState(() => {
@@ -146,11 +146,20 @@ function App() {
     localStorage.setItem("clicks", clicks);
   }, [clicks, andersonCoinNumber]);
 
+  //make a function that resets a number every 10 clicks
+  function coinUpdater() {
+    if (clicks >= 10) {
+      setAndersonCoinNumber(andersonCoinNumber + 1);
+      localStorage.setItem("coins", andersonCoinNumber);
+    }
+  }
+
   useEffect(() => {
     if (clicks >= 10 && clicks % 10 === 0) {
       setAndersonCoinNumber(andersonCoinNumber + 1);
       localStorage.setItem("coins", andersonCoinNumber);
     }
+    console.log("coins", andersonCoinNumber);
   }, [clicks]);
 
   useEffect(() => {
@@ -163,8 +172,9 @@ function App() {
       setAndersonCoinNumber(newAndersonCoinNumber);
 
       setClickMultiplier(clickMultiplier + 1);
-      setUpgradeCost(upgradeCost * 2);
+      setUpgradeCost(upgradeCost * 5);
 
+      localStorage.setItem("clickMultiplier", clickMultiplier + 1);
       localStorage.setItem("coins", newAndersonCoinNumber);
       console.log("Upgrade purchased!", newAndersonCoinNumber);
     }
@@ -200,7 +210,7 @@ function App() {
     }
 
     const newClicks = clicks + 1;
-    setClicks(newClicks + clickMultiplier);
+    setClicks(clicks + 1 * clickMultiplier);
 
     localStorage.setItem("coins", andersonCoinNumber);
     localStorage.setItem("clicks", newClicks);
@@ -274,7 +284,7 @@ function App() {
               onClick={UpgradeClick}
             >
               <img id="click-img" src={clickImg} />
-              <p id="upgrade-click-price"></p>
+              <p id="upgrade-click-price">{upgradeCost}</p>
             </button>
           </div>
         </div>
