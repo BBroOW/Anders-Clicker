@@ -121,6 +121,8 @@ function handleVolumeChange(event) {
   document.getElementById("demo").innerHTML = Math.round(newVolume * 100);
 }
 
+// i want a function that can count the clicks and then when you have clicked 10 times it resets the counter and gives you 1 coin
+
 const initialUpgradeCost = 10; // Initial cost of the upgrade
 let upgradeCost = initialUpgradeCost; // Variable to track the current upgrade cost
 
@@ -141,18 +143,12 @@ function App() {
     return parseFloat(localStorage.getItem("coins")) || clicks / 10;
   });
 
+  const [isUpgraded, setIsUpgraded] = useState(false);
+
   useEffect(() => {
     document.getElementById("displayClick").innerHTML = `${clicks} clicks`;
     localStorage.setItem("clicks", clicks);
   }, [clicks, andersonCoinNumber]);
-
-  //make a function that resets a number every 10 clicks
-  function coinUpdater() {
-    if (clicks >= 10) {
-      setAndersonCoinNumber(andersonCoinNumber + 1);
-      localStorage.setItem("coins", andersonCoinNumber);
-    }
-  }
 
   useEffect(() => {
     if (clicks >= 10 && clicks % 10 === 0) {
@@ -172,17 +168,30 @@ function App() {
       setAndersonCoinNumber(newAndersonCoinNumber);
 
       setClickMultiplier(clickMultiplier + 1);
-      setUpgradeCost(upgradeCost * 5);
+      setUpgradeCost(upgradeCost * 2);
 
       localStorage.setItem("clickMultiplier", clickMultiplier + 1);
       localStorage.setItem("coins", newAndersonCoinNumber);
+      setIsUpgraded(true); // Set the upgrade status to true
       console.log("Upgrade purchased!", newAndersonCoinNumber);
     }
   }
 
+  function UpgradeClickAnimation() {
+    if (andersonCoinNumber >= upgradeCost) {
+      console.log("Upgrade available!");
+      document.getElementById("upgrade-click").style.animation =
+        "pulse 1s infinite";
+    } else {
+      if (document.getElementById("upgrade-click") !== null) {
+        document.getElementById("upgrade-click").style.animation = "none";
+      }
+    }
+  }
+
+  UpgradeClickAnimation();
   function onClick() {
     playMusic();
-
     document.getElementById("image").style.transform = "scale(1.1)";
     setTimeout(() => {
       document.getElementById("image").style.transform = "scale(1)";
@@ -293,7 +302,12 @@ function App() {
 
       <div id="main-button">
         <p id="displayClick"></p>
-        <button type="button" onClick={onClick}>
+        <button
+          type="button"
+          id="main-button-button"
+          onClick={onClick}
+          disabled={!isUpgraded && clicks === 100}
+        >
           <img src={image} id="image" alt="Anders" />
         </button>
       </div>
