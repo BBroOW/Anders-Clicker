@@ -131,6 +131,10 @@ function App() {
     return parseInt(localStorage.getItem("clicks")) || 0;
   });
 
+  const [counterForCoins, setCounterForCoins] = useState(() => {
+    return parseInt(localStorage.getItem("clicks")) || 0;
+  });
+
   const [clickMultiplier, setClickMultiplier] = useState(() => {
     return parseInt(localStorage.getItem("clickMultiplier") || 1);
   });
@@ -140,7 +144,7 @@ function App() {
   });
 
   const [andersonCoinNumber, setAndersonCoinNumber] = useState(() => {
-    return parseFloat(localStorage.getItem("coins")) || clicks / 10;
+    return parseInt(localStorage.getItem("coins")) || clicks / 10;
   });
 
   const [isUpgraded, setIsUpgraded] = useState(false);
@@ -150,12 +154,20 @@ function App() {
     localStorage.setItem("clicks", clicks);
   }, [clicks, andersonCoinNumber]);
 
+  useEffect(() => {}, [clicks, andersonCoinNumber]);
+
   useEffect(() => {
-    if (clicks >= 10 && clicks % 10 === 0) {
+    if (clicks !== 0 && (clicks + 1) % 10 === 0) {
       setAndersonCoinNumber(andersonCoinNumber + 1);
       localStorage.setItem("coins", andersonCoinNumber);
     }
-    console.log("coins", andersonCoinNumber);
+  }, [clicks]);
+
+  useEffect(() => {
+    if (clicks < 10) {
+      setAndersonCoinNumber(0);
+      localStorage.setItem("coins", andersonCoinNumber);
+    }
   }, [clicks]);
 
   useEffect(() => {
@@ -180,8 +192,10 @@ function App() {
   function UpgradeClickAnimation() {
     if (andersonCoinNumber >= upgradeCost) {
       console.log("Upgrade available!");
-      document.getElementById("upgrade-click").style.animation =
-        "pulse 1s infinite";
+      if (document.getElementById("upgrade-click") !== null) {
+        document.getElementById("upgrade-click").style.animation =
+          "pulse 1s infinite";
+      }
     } else {
       if (document.getElementById("upgrade-click") !== null) {
         document.getElementById("upgrade-click").style.animation = "none";
@@ -218,11 +232,15 @@ function App() {
       document.getElementById("fnaf").style.display = "none";
     }
 
+    const newCounterForCoins = counterForCoins + 1;
+    setCounterForCoins(counterForCoins + 1);
+
     const newClicks = clicks + 1;
     setClicks(clicks + 1 * clickMultiplier);
 
     localStorage.setItem("coins", andersonCoinNumber);
     localStorage.setItem("clicks", newClicks);
+    localStorage.setItem("counterForCoins", newCounterForCoins);
   }
 
   if (clicks >= 1000) {
