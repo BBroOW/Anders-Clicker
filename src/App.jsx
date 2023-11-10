@@ -32,9 +32,13 @@ import anders7 from "./assets/images/anders7.png";
 import anders8 from "./assets/images/anders8.png";
 import anders9 from "./assets/images/anders9.png";
 import anders10 from "./assets/images/anders10.png";
+import playIcon from "./assets/images/play.png";
+import pauseIcon from "./assets/images/pause.png";
+import skipIcon from "./assets/images/skip.png";
 
 const AndersonCoin = andersonCoin;
 
+let playPauseIcon = pauseIcon;
 let image = anders1;
 let randomSong;
 let song;
@@ -123,8 +127,11 @@ function handleVolumeChange(event) {
 
 // i want a function that can count the clicks and then when you have clicked 10 times it resets the counter and gives you 1 coin
 
-const initialUpgradeCost = 10; // Initial cost of the upgrade
-let upgradeCost = initialUpgradeCost; // Variable to track the current upgrade cost
+const initialupgradeCostClick = 10; // Initial cost of the upgrade
+let upgradeCostClick = initialupgradeCostClick; // Variable to track the current upgrade cost
+
+const initialupgradeCostCoins = 50;
+let upgradeCostCoins = initialupgradeCostCoins;
 
 function App() {
   const [clicks, setClicks] = useState(() => {
@@ -132,36 +139,67 @@ function App() {
   });
 
   const [counterForCoins, setCounterForCoins] = useState(() => {
-    return parseInt(localStorage.getItem("clicks")) || 0;
+    return parseInt(localStorage.getItem("counterForCoins")) || 0;
   });
 
   const [clickMultiplier, setClickMultiplier] = useState(() => {
-    return parseInt(localStorage.getItem("clickMultiplier") || 1);
+    return parseInt(localStorage.getItem("clickMultiplier")) || 1;
   });
 
-  const [upgradeCost, setUpgradeCost] = useState(() => {
-    return parseInt(localStorage.getItem("upgradeCost")) || initialUpgradeCost;
+  const [coinMultiplier, setCoinMultiplier] = useState(() => {
+    return parseInt(localStorage.getItem("coinMultiplier")) || 1;
+  });
+
+  const [upgradeCostClick, setupgradeCostClick] = useState(() => {
+    return parseInt(localStorage.getItem("upgradeCostClick")) || initialupgradeCostClick;
+  });
+
+  const [upgradeCostCoins, setupgradeCostCoins] = useState(() => {
+    return parseInt(localStorage.getItem("upgradeCostCoins")) || initialupgradeCostCoins;
   });
 
   const [andersonCoinNumber, setAndersonCoinNumber] = useState(() => {
     return parseInt(localStorage.getItem("coins")) || clicks / 10;
   });
 
+  const [isPaused, setIsPaused] = useState(false);
   const [isUpgraded, setIsUpgraded] = useState(false);
+
+  function skip() {
+    if (isSongPlaying && song) {
+      song.pause();
+      isSongPlaying = false;
+      playMusic();
+    }
+  }
+
+  function playPause() {
+    if (isSongPlaying && song) {
+      setIsPaused(true);
+      song.pause();
+      isSongPlaying = false;
+      document.getElementById("playPause").innerHTML = `<button><img src=${playIcon} alt="" /></button>`;
+    } else {
+      setIsPaused(false);
+      song.play();
+      isSongPlaying = true;
+      document.getElementById("playPause").innerHTML = `<button><img src=${pauseIcon} alt="" /></button>`;
+    }
+  }
 
   useEffect(() => {
     document.getElementById("displayClick").innerHTML = `${clicks} clicks`;
     localStorage.setItem("clicks", clicks);
   }, [clicks, andersonCoinNumber]);
 
-  useEffect(() => {}, [clicks, andersonCoinNumber]);
-
   useEffect(() => {
-    if (clicks !== 0 && (clicks + 1) % 10 === 0) {
-      setAndersonCoinNumber(andersonCoinNumber + 1);
+    if (counterForCoins >= 10) {
+      setCounterForCoins(0);
+      setAndersonCoinNumber(andersonCoinNumber + 1 * coinMultiplier);
       localStorage.setItem("coins", andersonCoinNumber);
     }
-  }, [clicks]);
+    console.log("counter", counterForCoins);
+  }, [counterForCoins]);
 
   useEffect(() => {
     if (clicks < 10) {
@@ -171,16 +209,16 @@ function App() {
   }, [clicks]);
 
   useEffect(() => {
-    localStorage.setItem("upgradeCost", upgradeCost);
-  }, [upgradeCost]);
+    localStorage.setItem("upgradeCostClick", upgradeCostClick);
+  }, [upgradeCostClick]);
 
   function UpgradeClick() {
-    if (andersonCoinNumber >= upgradeCost) {
-      const newAndersonCoinNumber = andersonCoinNumber - upgradeCost;
+    if (andersonCoinNumber >= upgradeCostClick) {
+      const newAndersonCoinNumber = andersonCoinNumber - upgradeCostClick;
       setAndersonCoinNumber(newAndersonCoinNumber);
 
       setClickMultiplier(clickMultiplier + 1);
-      setUpgradeCost(upgradeCost * 2);
+      setupgradeCostClick(upgradeCostClick * 2);
 
       localStorage.setItem("clickMultiplier", clickMultiplier + 1);
       localStorage.setItem("coins", newAndersonCoinNumber);
@@ -190,7 +228,7 @@ function App() {
   }
 
   function UpgradeClickAnimation() {
-    if (andersonCoinNumber >= upgradeCost) {
+    if (andersonCoinNumber >= upgradeCostClick) {
       console.log("Upgrade available!");
       if (document.getElementById("upgrade-click") !== null) {
         document.getElementById("upgrade-click").style.animation =
@@ -204,8 +242,50 @@ function App() {
   }
 
   UpgradeClickAnimation();
+
+  useEffect(() => {
+    localStorage.setItem("upgradeCostCoins", upgradeCostCoins);
+  }, [upgradeCostCoins]);
+
+  function UpgradeCoins() {
+    if (andersonCoinNumber >= upgradeCostCoins) {
+      const newAndersonCoinNumber = andersonCoinNumber - upgradeCostCoins;
+      setAndersonCoinNumber(newAndersonCoinNumber);
+
+      setCoinMultiplier(coinMultiplier * 2);
+      setupgradeCostCoins(upgradeCostCoins * 2);
+
+      localStorage.setItem("coinMultiplier", coinMultiplier + 1);
+      localStorage.setItem("coins", newAndersonCoinNumber);
+      console.log("Upgrade purchased!", newAndersonCoinNumber);
+    }
+  }
+
+  function UpgradeCoinAnimation() {
+    if (andersonCoinNumber >= upgradeCostCoins) {
+      console.log("Upgrade available!");
+      if (document.getElementById("upgrade-coins") !== null) {
+        document.getElementById("upgrade-coins").style.animation =
+          "pulse 1s infinite";
+      }
+    } else {
+      if (document.getElementById("upgrade-coins") !== null) {
+        document.getElementById("upgrade-coins").style.animation = "none";
+      }
+    }
+  }
+
+  UpgradeCoinAnimation();
+
+  function startMusic() {
+    if (isSongPlaying === false && isPaused === false) {
+      playMusic();
+    }
+    console.log("music started");
+  }
+
   function onClick() {
-    playMusic();
+    startMusic();
     document.getElementById("image").style.transform = "scale(1.1)";
     setTimeout(() => {
       document.getElementById("image").style.transform = "scale(1)";
@@ -233,7 +313,7 @@ function App() {
     }
 
     const newCounterForCoins = counterForCoins + 1;
-    setCounterForCoins(counterForCoins + 1);
+    setCounterForCoins(counterForCoins + 1 * clickMultiplier);
 
     const newClicks = clicks + 1;
     setClicks(clicks + 1 * clickMultiplier);
@@ -290,6 +370,18 @@ function App() {
             id="myRange"
             onChange={handleVolumeChange}
           />
+          <div className="VolumeButtons">
+            <div id="skip">
+              <button type="button" onClick={skip}>
+                <img src={skipIcon} alt="" />
+              </button>
+              </div>
+              <div id="playPause" onClick={playPause}>
+              <button>
+                <img src={playPauseIcon} alt="" />
+              </button>
+              </div>
+          </div>
         </div>
         <h1 id="title">CLICK ANDERS</h1>
         <div id="login">
@@ -311,7 +403,17 @@ function App() {
               onClick={UpgradeClick}
             >
               <img id="click-img" src={clickImg} />
-              <p id="upgrade-click-price">{upgradeCost}</p>
+              <p id="upgrade-click-price">{upgradeCostClick}</p>
+            </button>
+          </div>
+          <div id="upgrade-coins">
+            <button
+              type="button"
+              id="upgrade-coins-button"
+              onClick={UpgradeCoins}
+            >
+              <img id="coins-img" src={andersonCoin} />
+              <p id="upgrade-coin-price">{upgradeCostCoins}</p>
             </button>
           </div>
         </div>
