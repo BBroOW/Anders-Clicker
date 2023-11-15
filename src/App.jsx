@@ -35,6 +35,7 @@ import anders10 from "./assets/images/anders10.png";
 import playIcon from "./assets/images/play.png";
 import pauseIcon from "./assets/images/pause.png";
 import skipIcon from "./assets/images/skip.png";
+import autoclicker from "./assets/images/autoclicker.png";
 
 const AndersonCoin = andersonCoin;
 
@@ -45,47 +46,45 @@ let song;
 let isSongPlaying = false;
 let audioVolume = 0.2;
 
+let lastPlayedSong = ""; // Initialize the variable to store the last played song
+
 function randomNumberMusic() {
-  const randomNumberSong = Math.floor(Math.random() * 17);
+  const songs = [
+    Letsgo,
+    Nekozilla,
+    OnAndON,
+    WhyWeLose,
+    Arrow,
+    Blank,
+    Cetus,
+    Circles,
+    DifferentHeaven,
+    ElectroLights,
+    FallOfLight,
+    Hellcat,
+    Invincible,
+    Panda,
+    Shine,
+    ShootingStars,
+    TropicLove,
+    Symbolism,
+  ];
+
+  // Remove the last played song from the array if it exists
+  const filteredSongs = songs.filter((song) => song !== lastPlayedSong);
+
+  if (filteredSongs.length === 0) {
+    // If all songs have been played, reset and include all songs again
+    lastPlayedSong = "";
+  }
+
+  // Generate a random number based on the filtered array
+  const randomNumberSong = Math.floor(Math.random() * filteredSongs.length);
   console.log(randomNumberSong);
 
-  if (randomNumberSong === 0 && randomSong !== Letsgo) {
-    randomSong = Letsgo;
-  } else if (randomNumberSong === 1 && randomSong !== Nekozilla) {
-    randomSong = Nekozilla;
-  } else if (randomNumberSong === 2 && randomSong !== OnAndON) {
-    randomSong = OnAndON;
-  } else if (randomNumberSong === 3 && randomSong !== WhyWeLose) {
-    randomSong = WhyWeLose;
-  } else if (randomNumberSong === 4 && randomSong !== Arrow) {
-    randomSong = Arrow;
-  } else if (randomNumberSong === 5 && randomSong !== Blank) {
-    randomSong = Blank;
-  } else if (randomNumberSong === 6 && randomSong !== Cetus) {
-    randomSong = Cetus;
-  } else if (randomNumberSong === 7 && randomSong !== Circles) {
-    randomSong = Circles;
-  } else if (randomNumberSong === 8 && randomSong !== DifferentHeaven) {
-    randomSong = DifferentHeaven;
-  } else if (randomNumberSong === 9 && randomSong !== ElectroLights) {
-    randomSong = ElectroLights;
-  } else if (randomNumberSong === 10 && randomSong !== FallOfLight) {
-    randomSong = FallOfLight;
-  } else if (randomNumberSong === 11 && randomSong !== Hellcat) {
-    randomSong = Hellcat;
-  } else if (randomNumberSong === 12 && randomSong !== Invincible) {
-    randomSong = Invincible;
-  } else if (randomNumberSong === 13 && randomSong !== Panda) {
-    randomSong = Panda;
-  } else if (randomNumberSong === 14 && randomSong !== Shine) {
-    randomSong = Shine;
-  } else if (randomNumberSong === 15 && randomSong !== ShootingStars) {
-    randomSong = ShootingStars;
-  } else if (randomNumberSong === 16 && randomSong !== TropicLove) {
-    randomSong = TropicLove;
-  } else if (randomNumberSong === 17 && randomSong !== Symbolism) {
-    randomSong = Symbolism;
-  }
+  // Update the last played song and the current random song
+  lastPlayedSong = filteredSongs[randomNumberSong];
+  randomSong = lastPlayedSong;
 }
 
 function volumeSlider() {
@@ -151,15 +150,29 @@ function App() {
   });
 
   const [upgradeCostClick, setupgradeCostClick] = useState(() => {
-    return parseInt(localStorage.getItem("upgradeCostClick")) || initialupgradeCostClick;
+    return (
+      parseInt(localStorage.getItem("upgradeCostClick")) ||
+      initialupgradeCostClick
+    );
   });
 
   const [upgradeCostCoins, setupgradeCostCoins] = useState(() => {
-    return parseInt(localStorage.getItem("upgradeCostCoins")) || initialupgradeCostCoins;
+    return (
+      parseInt(localStorage.getItem("upgradeCostCoins")) ||
+      initialupgradeCostCoins
+    );
   });
 
   const [andersonCoinNumber, setAndersonCoinNumber] = useState(() => {
     return parseInt(localStorage.getItem("coins")) || clicks / 10;
+  });
+
+  const [initialAutoClickerCost, setInitialAutoClickerCost] = useState(100);
+  const [autoClickerCost, setAutoClickerCost] = useState(() => {
+    return (
+      parseInt(localStorage.getItem("autoClickerCost")) ||
+      initialAutoClickerCost
+    );
   });
 
   const [isPaused, setIsPaused] = useState(false);
@@ -178,12 +191,16 @@ function App() {
       setIsPaused(true);
       song.pause();
       isSongPlaying = false;
-      document.getElementById("playPause").innerHTML = `<button><img src=${playIcon} alt="" /></button>`;
+      document.getElementById(
+        "playPause"
+      ).innerHTML = `<button><img src=${playIcon} alt="" /></button>`;
     } else {
       setIsPaused(false);
       song.play();
       isSongPlaying = true;
-      document.getElementById("playPause").innerHTML = `<button><img src=${pauseIcon} alt="" /></button>`;
+      document.getElementById(
+        "playPause"
+      ).innerHTML = `<button><img src=${pauseIcon} alt="" /></button>`;
     }
   }
 
@@ -216,8 +233,11 @@ function App() {
     if (andersonCoinNumber >= upgradeCostClick) {
       const newAndersonCoinNumber = andersonCoinNumber - upgradeCostClick;
       setAndersonCoinNumber(newAndersonCoinNumber);
-
-      setClickMultiplier(clickMultiplier + 1);
+      if (clickMultiplier >= 10) {
+        setClickMultiplier(clickMultiplier * 2);
+      } else {
+        setClickMultiplier(clickMultiplier + 1);
+      }
       setupgradeCostClick(upgradeCostClick * 2);
 
       localStorage.setItem("clickMultiplier", clickMultiplier + 1);
@@ -242,6 +262,39 @@ function App() {
   }
 
   UpgradeClickAnimation();
+
+  function upgradeAutoClicker() {
+    if (andersonCoinNumber >= autoClickerCost) {
+      const newAndersonCoinNumber = andersonCoinNumber - autoClickerCost;
+      setAndersonCoinNumber(newAndersonCoinNumber);
+
+      setAutoClickerCost(autoClickerCost * 2);
+
+      localStorage.setItem("coins", newAndersonCoinNumber);
+      localStorage.setItem("autoClickerCost", autoClickerCost);
+
+      // Set up an interval to generate 1 click every second
+      autoClickerInterval = setInterval(() => {
+        setClicks((prevClicks) => prevClicks + 1 * clickMultiplier);
+      }, 1000);
+    }
+  }
+  function autoClickUpgradeAnimation() {
+    if (andersonCoinNumber >= autoClickerCost) {
+      console.log("Upgrade available!");
+      if (document.getElementById("upgrade-auto-clicker") !== null) {
+        document.getElementById("upgrade-auto-clicker").style.animation =
+          "pulse 1s infinite";
+      }
+    } else {
+      if (document.getElementById("upgrade-auto-clicker") !== null) {
+        document.getElementById("upgrade-auto-clicker").style.animation =
+          "none";
+      }
+    }
+  }
+
+  autoClickUpgradeAnimation();
 
   useEffect(() => {
     localStorage.setItem("upgradeCostCoins", upgradeCostCoins);
@@ -323,32 +376,27 @@ function App() {
     localStorage.setItem("counterForCoins", newCounterForCoins);
   }
 
-  if (clicks >= 1000) {
-    image = anders2;
-  }
-  if (clicks >= 20000) {
-    image = anders3;
-  }
-  if (clicks >= 300000) {
-    image = anders4;
-  }
-  if (clicks >= 4000000) {
-    image = anders5;
-  }
-  if (clicks >= 50000000) {
-    image = anders6;
-  }
-  if (clicks >= 600000000) {
-    image = anders7;
-  }
-  if (clicks >= 7000000000) {
-    image = anders8;
-  }
-  if (clicks >= 80000000000) {
-    image = anders9;
-  }
-  if (clicks >= 900000000000) {
-    image = anders10;
+  // Assuming anders2 to anders10 are variables representing images
+  const thresholdImages = [
+    { threshold: 1000, image: anders2 },
+    { threshold: 20000, image: anders3 },
+    { threshold: 300000, image: anders4 },
+    { threshold: 4000000, image: anders5 },
+    { threshold: 50000000, image: anders6 },
+    { threshold: 600000000, image: anders7 },
+    { threshold: 7000000000, image: anders8 },
+    { threshold: 80000000000, image: anders9 },
+    { threshold: 900000000000, image: anders10 },
+  ];
+
+  // Find the first item in the array where the clicks threshold is greater than or equal to the current clicks
+  const thresholdImage = thresholdImages.find(
+    (item) => clicks >= item.threshold
+  );
+
+  // If a match is found, update the image variable
+  if (thresholdImage) {
+    image = thresholdImage.image;
   }
 
   return (
@@ -375,12 +423,12 @@ function App() {
               <button type="button" onClick={skip}>
                 <img src={skipIcon} alt="" />
               </button>
-              </div>
-              <div id="playPause" onClick={playPause}>
+            </div>
+            <div id="playPause" onClick={playPause}>
               <button>
                 <img src={playPauseIcon} alt="" />
               </button>
-              </div>
+            </div>
           </div>
         </div>
         <h1 id="title">CLICK ANDERS</h1>
@@ -414,6 +462,16 @@ function App() {
             >
               <img id="coins-img" src={andersonCoin} />
               <p id="upgrade-coin-price">{upgradeCostCoins}</p>
+            </button>
+          </div>
+          <div id="upgrade-auto-clicker">
+            <button
+              type="button"
+              id="upgrade-auto-clicker-button"
+              onClick={upgradeAutoClicker}
+            >
+              <img id="auto-clicker-img" src={autoclicker} />
+              <p id="upgrade-auto-clicker-price">{autoClickerCost}</p>
             </button>
           </div>
         </div>
