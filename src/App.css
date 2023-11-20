@@ -53,7 +53,7 @@ body {
   text-align: center;
   background-color: #435055;
   width: 100vw;
-  margin-top: -23rem;
+  margin-top: -35rem;
 }
 
 #main-button img {
@@ -159,11 +159,14 @@ body {
 }
 
 #upgrade-auto-clicker-button {
-  width: 10vw;
+  width: 20vw;
   height: 5rem;
 }
 
 #upgrade-auto-clicker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 20vw;
   height: 5rem;
   margin-left: 3rem;

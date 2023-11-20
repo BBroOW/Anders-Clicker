@@ -36,6 +36,7 @@ import playIcon from "./assets/images/play.png";
 import pauseIcon from "./assets/images/pause.png";
 import skipIcon from "./assets/images/skip.png";
 import autoclicker from "./assets/images/autoclicker.png";
+import AudioComponents from "./Elements/AudioComponent";
 
 const AndersonCoin = andersonCoin;
 
@@ -87,12 +88,6 @@ function randomNumberMusic() {
   randomSong = lastPlayedSong;
 }
 
-function volumeSlider() {
-  var slider = document.getElementById("myRange");
-  var output = document.getElementById("demo");
-  output.innerHTML = slider.value;
-}
-
 function playMusic() {
   if (isSongPlaying) {
     return;
@@ -100,6 +95,12 @@ function playMusic() {
 
   randomNumberMusic();
   song = new Audio(randomSong);
+
+  function volumeSlider() {
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("demo");
+    output.innerHTML = slider.value;
+  }
 
   song.volume = audioVolume;
   isSongPlaying = true;
@@ -132,7 +133,23 @@ let upgradeCostClick = initialupgradeCostClick; // Variable to track the current
 const initialupgradeCostCoins = 50;
 let upgradeCostCoins = initialupgradeCostCoins;
 
+const ParticleEffect = ({ x, y, color }) => {
+  return (
+    <div
+      className="particle move"
+      style={{
+        position: "absolute",
+        left: x,
+        top: y,
+        background: color,
+      }}
+    ></div>
+  );
+};
+
 function App() {
+  const [autoClickerIntervalId, setAutoClickerIntervalId] = useState(null);
+
   const [clicks, setClicks] = useState(() => {
     return parseInt(localStorage.getItem("clicks")) || 0;
   });
@@ -174,9 +191,8 @@ function App() {
       initialAutoClickerCost
     );
   });
-
-  const [isPaused, setIsPaused] = useState(false);
   const [isUpgraded, setIsUpgraded] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   function skip() {
     if (isSongPlaying && song) {
@@ -273,12 +289,20 @@ function App() {
       localStorage.setItem("coins", newAndersonCoinNumber);
       localStorage.setItem("autoClickerCost", autoClickerCost);
 
-      // Set up an interval to generate 1 click every second
-      autoClickerInterval = setInterval(() => {
+      // Clear the existing auto-clicker interval (if any)
+      clearInterval(autoClickerIntervalId);
+
+      // Set up an interval to generate 1 coin every second
+      const newAutoClickerInterval = setInterval(() => {
         setClicks((prevClicks) => prevClicks + 1 * clickMultiplier);
+        setCounterForCoins((prevCounter) => prevCounter + 1 * coinMultiplier);
       }, 1000);
+
+      // Store the new interval ID in state
+      setAutoClickerIntervalId(newAutoClickerInterval);
     }
   }
+
   function autoClickUpgradeAnimation() {
     if (andersonCoinNumber >= autoClickerCost) {
       console.log("Upgrade available!");
@@ -295,6 +319,24 @@ function App() {
   }
 
   autoClickUpgradeAnimation();
+
+  useEffect(() => {
+    // Set up the auto-clicker interval when the component mounts
+    if (autoClickerCost > initialAutoClickerCost) {
+      const autoClickerInterval = setInterval(() => {
+        setClicks((prevClicks) => prevClicks + 1 * clickMultiplier);
+        setCounterForCoins((prevCounter) => prevCounter + 1 * coinMultiplier);
+      }, 1000);
+
+      // Store the interval ID in state
+      setAutoClickerIntervalId(autoClickerInterval);
+    }
+
+    // Clear the auto-clicker interval when the component is unmounted
+    return () => {
+      clearInterval(autoClickerIntervalId);
+    };
+  }, [autoClickerCost, autoClickerIntervalId]);
 
   useEffect(() => {
     localStorage.setItem("upgradeCostCoins", upgradeCostCoins);
@@ -329,13 +371,6 @@ function App() {
   }
 
   UpgradeCoinAnimation();
-
-  function startMusic() {
-    if (isSongPlaying === false && isPaused === false) {
-      playMusic();
-    }
-    console.log("music started");
-  }
 
   function onClick() {
     startMusic();
@@ -405,32 +440,7 @@ function App() {
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       <div id="navbar">
-        <div id="volume">
-          <p>
-            Volume: <span id="demo"></span>
-          </p>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            defaultValue={audioVolume * 100}
-            className="slider"
-            id="myRange"
-            onChange={handleVolumeChange}
-          />
-          <div className="VolumeButtons">
-            <div id="skip">
-              <button type="button" onClick={skip}>
-                <img src={skipIcon} alt="" />
-              </button>
-            </div>
-            <div id="playPause" onClick={playPause}>
-              <button>
-                <img src={playPauseIcon} alt="" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <AudioComponents />
         <h1 id="title">CLICK ANDERS</h1>
         <div id="login">
           <p>login</p>
