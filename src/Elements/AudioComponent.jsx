@@ -23,7 +23,11 @@ import playIcon from "../assets/images/play.png";
 import pauseIcon from "../assets/images/pause.png";
 import skipIcon from "../assets/images/skip.png";
 
-function AudioComponents() {
+
+
+
+function AudioComponents(hasMusicStarted) {
+  console.log(hasMusicStarted)
   let playPauseIcon = pauseIcon;
 
   let randomSong;
@@ -141,8 +145,17 @@ function AudioComponents() {
     if (isSongPlaying === false && isPaused === false) {
       playMusic();
     }
-    console.log("music started");
   }
+
+  useEffect(()=>{
+    if (hasMusicStarted){
+      startMusic();
+      console.log("Started song")
+    }
+
+
+  },[hasMusicStarted])
+
   return (
     <div id="audio-container">
       <div id="volume">
@@ -174,5 +187,7 @@ function AudioComponents() {
     </div>
   );
 }
+
+
 
 export default AudioComponents;

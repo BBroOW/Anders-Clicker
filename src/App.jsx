@@ -373,7 +373,6 @@ function App() {
   UpgradeCoinAnimation();
 
   function onClick() {
-    startMusic();
     document.getElementById("image").style.transform = "scale(1.1)";
     setTimeout(() => {
       document.getElementById("image").style.transform = "scale(1)";
@@ -440,7 +439,7 @@ function App() {
         <video id="fnaf" src={video} style={{ display: "none" }} />
       </div>
       <div id="navbar">
-        <AudioComponents />
+        <AudioComponents hasMusicStarted={true} />
         <h1 id="title">CLICK ANDERS</h1>
         <div id="login">
           <p>login</p>
